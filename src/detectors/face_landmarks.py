@@ -13,7 +13,8 @@ class FaceLandmarkDetector:
 
         options = vision.FaceLandmarkerOptions(
             base_options=base_options,
-            num_faces=1
+            num_faces=1,
+	    output_facial_transformation_matrixes=True
         )
 
         self.detector = vision.FaceLandmarker.create_from_options(options)
