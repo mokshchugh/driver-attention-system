@@ -1,1 +1,44 @@
+# ============================
+# Python Junk
+# ============================
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments
+venv/
+env/
+.python_envs/
+*.venv/
+
+# ============================
+# Model Weights (DO NOT PUSH)
+# ============================
+models/*.pt
+models/*.task
+models/*.onnx
+
+# ============================
+# Outputs / Logs
+# ============================
+outputs/
+data/
+*.log
+
+# ============================
+# OS / Editor Files
+# ============================
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# ============================
+# Database Dumps (Optional)
+# ============================
+*.db
+*.sqlite3
+*.csv
+
