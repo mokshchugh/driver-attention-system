@@ -1,3 +1,5 @@
+import os
+
 # ============================
 # CONFIGURATION FILE
 # ============================
@@ -20,5 +22,11 @@ DECAY_RATE = 0.92
 RISK_THRESHOLD = 60
 
 # Database
-DB_NAME = "driver_attention_db"
-DB_USER = "moksh"
+DB_NAME = os.getenv("DB_NAME", "driver_attention_db")
+DB_USER = os.getenv("DB_USER", "moksh")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", "5432"))
+
+# Calibration
+CALIBRATION_DURATION_SECONDS = 12
