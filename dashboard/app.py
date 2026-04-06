@@ -16,7 +16,13 @@ from analytics.queries import get_event_timeline
 # MODIFIED: auth now lives in db.accounts; bcrypt moved there too
 from db.accounts import create_account, get_account_by_email, verify_password
 from db.drivers import create_driver_with_email, get_driver, get_driver_by_email
-from services.calibration import start_calibration
+
+import os
+
+IS_CLOUD = os.getenv("STREAMLIT_CLOUD", "false") == "true"
+start_calibration = None
+if not IS_CLOUD:
+    from services.calibration import start_calibration
 
 
 EVENT_LABELS = {
@@ -186,9 +192,11 @@ def main():
     render_event_timeline(timeline_df)
     render_session_stats(metrics["event_counts"], metrics["sessions"], metrics["max_risk"])
 
-
 def render_calibration_sidebar(driver_id: int):
     st.sidebar.header("Calibration")
+    if IS_CLOUD:
+        st.sidebar.caption("⚠️ Calibration must be run locally using `python src/main.py`.")
+        return
     if st.sidebar.button("Start calibration", use_container_width=True):
         with st.spinner("Capturing baseline data from the camera..."):
             try:
