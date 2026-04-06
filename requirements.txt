@@ -3,6 +3,6 @@ numpy
 opencv-python
 pandas
 plotly
-psycopg2
 streamlit
 ultralytics
+bcrypt
