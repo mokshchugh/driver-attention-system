@@ -1,7 +1,5 @@
 import psycopg2
-
-from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
-
+from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DB_SSLMODE
 
 def get_db_connection():
     connection_kwargs = {
@@ -9,9 +7,8 @@ def get_db_connection():
         "user": DB_USER,
         "host": DB_HOST,
         "port": DB_PORT,
+        "sslmode": DB_SSLMODE,
     }
-
     if DB_PASSWORD:
         connection_kwargs["password"] = DB_PASSWORD
-
     return psycopg2.connect(**connection_kwargs)

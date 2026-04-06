@@ -30,3 +30,6 @@ DB_PORT = int(os.getenv("DB_PORT", "5432"))
 
 # Calibration
 CALIBRATION_DURATION_SECONDS = 12
+
+# SSL
+DB_SSLMODE = os.getenv("DB_SSLMODE", "require")
