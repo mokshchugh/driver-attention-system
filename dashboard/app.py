@@ -195,7 +195,7 @@ def main():
 def render_calibration_sidebar(driver_id: int):
     st.sidebar.header("Calibration")
     if IS_CLOUD:
-        st.sidebar.caption("⚠️ Calibration must be run locally using `python src/main.py`.")
+        st.sidebar.caption("⚠️ Calibration must be run locally.")
         return
     if st.sidebar.button("Start calibration", use_container_width=True):
         with st.spinner("Capturing baseline data from the camera..."):
