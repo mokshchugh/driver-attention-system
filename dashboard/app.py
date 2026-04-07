@@ -117,7 +117,7 @@ def render_auth_page():
         with st.form("login_form"):
             email    = st.text_input("Email", placeholder="you@example.com")
             password = st.text_input("Password", type="password")
-            submitted = st.form_submit_button("Log in", use_container_width=True)
+            submitted = st.form_submit_button("Log in", width='stretch')
         if submitted:
             err = do_login(email.strip().lower(), password)
             if err:
@@ -132,7 +132,7 @@ def render_auth_page():
             email_su     = st.text_input("Email", placeholder="you@example.com")
             password_su  = st.text_input("Password", type="password")
             password_su2 = st.text_input("Confirm password", type="password")
-            submitted_su = st.form_submit_button("Create account", use_container_width=True)
+            submitted_su = st.form_submit_button("Create account", width='stretch')
         if submitted_su:
             if password_su != password_su2:
                 st.error("Passwords do not match.")
@@ -165,7 +165,7 @@ def main():
 
     with st.sidebar:
         st.markdown(f"Logged in as **{st.session_state['current_user_name']}**")
-        if st.button("Log out", use_container_width=True):
+        if st.button("Log out", width='stretch'):
             do_logout()
             st.rerun()
         st.divider()
@@ -197,7 +197,7 @@ def render_calibration_sidebar(driver_id: int):
     if IS_CLOUD:
         st.sidebar.caption("⚠️ Calibration must be run locally.")
         return
-    if st.sidebar.button("Start calibration", use_container_width=True):
+    if st.sidebar.button("Start calibration", width='stretch'):
         with st.spinner("Capturing baseline data from the camera..."):
             try:
                 result = start_calibration(driver_id)
@@ -261,7 +261,7 @@ def render_risk_chart(risk_timeseries):
         markers=True, title="Risk score over time",
     )
     fig.update_layout(xaxis_title="Timestamp", yaxis_title="Risk score")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 def render_event_timeline(timeline_df):
@@ -272,7 +272,7 @@ def render_event_timeline(timeline_df):
 
     view_df = timeline_df.copy()
     view_df["timestamp"] = pd.to_datetime(view_df["timestamp"])
-    st.dataframe(view_df, use_container_width=True, hide_index=True)
+    st.dataframe(view_df, width='stretch', hide_index=True)
 
 
 def render_session_stats(event_counts, sessions, max_risk_df):
