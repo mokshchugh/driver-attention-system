@@ -1,3 +1,4 @@
+import os
 import psycopg2
 from config import (
     LOCAL_PG_HOST, LOCAL_PG_PORT, LOCAL_PG_DB, LOCAL_PG_USER, LOCAL_PG_PASSWORD,
