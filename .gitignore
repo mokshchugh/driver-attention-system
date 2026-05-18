@@ -43,3 +43,4 @@ data/
 *.csv
 
 .env
+*.env

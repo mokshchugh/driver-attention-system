@@ -1,5 +1,5 @@
 import numpy as np
-from config import EAR_THRESHOLD
+from config import EAR_SENSITIVITY
 
 LEFT_EYE = [33, 160, 158, 133, 153, 144]
 RIGHT_EYE = [362, 385, 387, 263, 373, 380]
@@ -33,5 +33,10 @@ def get_avg_ear(face_landmarks, w, h):
 			compute_ear(right_eye_pts)) / 2.0
 
 
-def eyes_closed(avg_ear):
-    return avg_ear < EAR_THRESHOLD
+def eyes_closed(
+    avg_ear,
+    baseline_ear,
+):
+    threshold = baseline_ear * EAR_SENSITIVITY
+
+    return avg_ear < threshold

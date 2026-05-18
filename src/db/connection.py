@@ -1,17 +1,26 @@
 import psycopg2
-
-from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
-
+from config import (
+    LOCAL_PG_HOST, LOCAL_PG_PORT, LOCAL_PG_DB, LOCAL_PG_USER, LOCAL_PG_PASSWORD,
+    NEON_HOST, NEON_PORT, NEON_DB, NEON_USER, NEON_PASSWORD,
+)
 
 def get_db_connection():
-    connection_kwargs = {
-        "dbname": DB_NAME,
-        "user": DB_USER,
-        "host": DB_HOST,
-        "port": DB_PORT,
-    }
+    """Local PostgreSQL connection."""
+    return psycopg2.connect(
+        host=LOCAL_PG_HOST,
+        port=LOCAL_PG_PORT,
+        dbname=LOCAL_PG_DB,
+        user=LOCAL_PG_USER,
+        password=LOCAL_PG_PASSWORD,
+    )
 
-    if DB_PASSWORD:
-        connection_kwargs["password"] = DB_PASSWORD
-
-    return psycopg2.connect(**connection_kwargs)
+def get_neon_connection():
+    """Neon PostgreSQL connection — used only at session end."""
+    return psycopg2.connect(
+        host=NEON_HOST,
+        port=NEON_PORT,
+        dbname=NEON_DB,
+        user=NEON_USER,
+        password=NEON_PASSWORD,
+        sslmode="require",
+    )

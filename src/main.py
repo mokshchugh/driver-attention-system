@@ -17,40 +17,62 @@ from services.session_manager import SessionManager
 
 
 # ─────────────────────────────────────────────
-# NEW: terminal login — resolves driver_id from DB
+# terminal login
 # ─────────────────────────────────────────────
 
 def prompt_login() -> int:
-    """
-    Prompt for email + password in the terminal.
-    Verifies against the accounts table and returns the bound driver_id.
-    Exits with a clear message on failure.
-    """
     print("=== Driver Attention System – Login ===")
-    email    = input("Email: ").strip().lower()
+
+    email = input("Email: ").strip().lower()
     password = getpass.getpass("Password: ")
+
+    # ─────────────────────────────────────────
+    # 1. Try local cache first
+    # ─────────────────────────────────────────
 
     account = get_account_by_email(email)
 
+    # ─────────────────────────────────────────
+    # 2. Cache miss → hydrate from Neon
+    # ─────────────────────────────────────────
+
     if account is None:
-        print("Error: no account found for that email.")
-        sys.exit(1)
+        print("Local cache miss. Fetching from cloud...")
+
+        from db.accounts import hydrate_account_from_cloud
+
+        account = hydrate_account_from_cloud(email)
+
+        if account is None:
+            print("Error: no account found for that email.")
+            sys.exit(1)
+
+        print("Account cached locally.")
+
+    # ─────────────────────────────────────────
+    # 3. Password verification
+    # ─────────────────────────────────────────
 
     if not verify_password(password, account["password_hash"]):
         print("Error: incorrect password.")
         sys.exit(1)
 
+    # ─────────────────────────────────────────
+    # 4. Driver validation
+    # ─────────────────────────────────────────
+
     driver_id = account["driver_id"]
+
     if driver_id is None:
         print("Error: account has no linked driver profile.")
         sys.exit(1)
 
     print(f"Logged in as {account['name']} (driver #{driver_id})\n")
+
     return driver_id
 
-
 # ─────────────────────────────────────────────
-# EXISTING: main loop (driver_id source changed, nothing else)
+# main loop
 # ─────────────────────────────────────────────
 
 def main(driver_id: int):
@@ -58,6 +80,23 @@ def main(driver_id: int):
 
     if driver is None:
         raise ValueError(f"Driver {driver_id} does not exist.")
+        
+    from config import (
+        DEFAULT_BASELINE_EAR,
+        DEFAULT_BASELINE_YAW,
+        )
+    
+    baseline_ear = (
+        driver["baseline_ear"]
+        if driver["baseline_ear"] is not None
+        else DEFAULT_BASELINE_EAR
+    )
+    
+    baseline_yaw = (
+        driver["baseline_yaw"]
+        if driver["baseline_yaw"] is not None
+        else DEFAULT_BASELINE_YAW
+    )
 
     face_detector    = FaceLandmarkDetector()
     phone_detector   = PhoneDetector()
@@ -121,7 +160,7 @@ def main(driver_id: int):
                     cv2.putText(frame, f"Yaw: {yaw:.1f}", (30, 250),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-                    if headpose_detector.looking_away(yaw):
+                    if headpose_detector.looking_away(yaw, baseline_yaw):
                         cv2.putText(frame, "LOOKING AWAY!", (30, 300),
                                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
                         risk_engine.risk_score += 10 * dt
@@ -132,7 +171,7 @@ def main(driver_id: int):
                             logger.log(risk_engine.risk_score, "GAZE_AWAY_EVENT")
                             main.last_gaze_log = cv2.getTickCount()
 
-                if eyes_closed(avg_ear):
+                if eyes_closed(avg_ear, baseline_ear):
                     if risk_engine.eye_closed_start is None:
                         risk_engine.eye_closed_start = cv2.getTickCount()
 
@@ -180,12 +219,12 @@ def main(driver_id: int):
     finally:
         cap.release()
         cv2.destroyAllWindows()
-        session_manager.close_session()
+        session_manager.close_session(logger)
         logger.close()
 
 
 # ─────────────────────────────────────────────
-# MODIFIED: --driver-id removed; login prompt resolves it
+# MAIN ENTRY
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":

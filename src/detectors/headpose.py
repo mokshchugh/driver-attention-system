@@ -1,8 +1,8 @@
 import numpy as np
-
+from config import YAW_DEVIATION_THRESHOLD
 
 class HeadPoseDetector:
-	def __init__(self, yaw_threshold=25):
+	def __init__(self, yaw_threshold=YAW_DEVIATION_THRESHOLD):
 		self.yaw_threshold = yaw_threshold
 
 	def get_yaw(self, transformation_matrix):
@@ -14,5 +14,6 @@ class HeadPoseDetector:
 
 		return yaw_deg
 
-	def looking_away(self, yaw_deg):
-		return abs(yaw_deg) > self.yaw_threshold
+	def looking_away(self, yaw_deg, baseline_yaw):
+		deviation = abs(yaw_deg - baseline_yaw)
+		return deviation > self.yaw_threshold
