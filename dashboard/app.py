@@ -411,7 +411,7 @@ def main():
             st.rerun()
         st.divider()
 
-    st.title("Simplified Driver Safety Dashboard")
+    st.title("Driver Attention Monitoring System")
 
     driver_id = st.session_state["current_driver_id"]
     if driver_id is None:
