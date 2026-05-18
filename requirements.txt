@@ -1,8 +1,6 @@
-mediapipe
 numpy
-opencv-python
 pandas
 plotly
 psycopg2-binary
 streamlit
-ultralytics
+python-dotenv
