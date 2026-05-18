@@ -51,16 +51,31 @@ NEON_DB           = os.getenv("NEON_DB")
 NEON_USER         = os.getenv("NEON_USER")
 NEON_PASSWORD     = os.getenv("NEON_PASSWORD")
 
+
 # Sanity check on startup
+
+# Detect environment
+STREAMLIT_CLOUD = os.getenv("STREAMLIT_CLOUD", "false").lower() == "true"
+
+# Base required vars (always needed)
 _required = {
-    "LOCAL_PG_DB": LOCAL_PG_DB,
-    "LOCAL_PG_USER": LOCAL_PG_USER,
-    "LOCAL_PG_PASSWORD": LOCAL_PG_PASSWORD,
     "NEON_HOST": NEON_HOST,
     "NEON_DB": NEON_DB,
     "NEON_USER": NEON_USER,
     "NEON_PASSWORD": NEON_PASSWORD,
 }
+
+# Local DB only required outside Streamlit Cloud
+if not STREAMLIT_CLOUD:
+    _required.update({
+        "LOCAL_PG_DB": LOCAL_PG_DB,
+        "LOCAL_PG_USER": LOCAL_PG_USER,
+        "LOCAL_PG_PASSWORD": LOCAL_PG_PASSWORD,
+    })
+
 _missing = [k for k, v in _required.items() if not v]
+
 if _missing:
-    raise EnvironmentError(f"Missing required env vars: {', '.join(_missing)}")
+    raise EnvironmentError(
+        f"Missing required env vars: {', '.join(_missing)}"
+    )
