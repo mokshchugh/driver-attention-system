@@ -44,3 +44,4 @@ data/
 
 .env
 *.env
+.env.local
