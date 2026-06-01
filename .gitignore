@@ -45,3 +45,4 @@ data/
 .env
 *.env
 .env.local
+.envrc
